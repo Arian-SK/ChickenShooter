@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e40672ad56aeb349abceb37b1ce1f99, type: 3}
+  m_Name: Campaign
+  m_EditorClassIdentifier: Cluck.Runtime::Cluck.CampaignDataSO
+  menuScene: MainMenu
+  levels:
+  - {fileID: 11400000, guid: e88ebfa7ad79ced4bae0a053e60d65d0, type: 2}
+  - {fileID: 11400000, guid: 6a6dc1f299050384caf50435ba977464, type: 2}
+  - {fileID: 11400000, guid: fc411056ddfe5b145a140b66379b974f, type: 2}
+  weaponTiers:
+  - {fileID: 11400000, guid: cc85e78b88f19a548b24ba6b67926a3f, type: 2}
+  - {fileID: 11400000, guid: 4ee9716e27ca4ba418fe4a26e2600bdc, type: 2}
+  - {fileID: 11400000, guid: 8c026c8194b769f4d8afa4df0cd865d9, type: 2}
+  controls: {fileID: -944628639613478452, guid: c44c2d2567d8e4c42bf135c1527c39f5, type: 3}
+  ship: {fileID: 21300000, guid: 46abf14db9ff8614a837ccff91ad60e6, type: 3}
+  shield: {fileID: 21300000, guid: 1ad30b5dc2b06f143b3f91823efdb770, type: 3}
+  flare: {fileID: 21300000, guid: 55fe7f0b1f10b5743bac388a7df8e81d, type: 3}
+  ring: {fileID: 21300000, guid: 271400d8564cf6b499691280a256acc3, type: 3}
+  spriteMaterial: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  egg: {fileID: 7919558801785326632, guid: 178bb4efa4f87ee4d805226dc17fe1db, type: 3}
+  gift: {fileID: 138677470878455625, guid: edbd4e0acc12d8f49b0a3aa6c89c841f, type: 3}
+  spark: {fileID: 5616533846985035521, guid: 93536e4db1731694babc4f869fd61fcb, type: 3}
+  menuMusic: {fileID: 8300000, guid: a9501112d971e0b49b7417dc6bb24167, type: 3}
+  laserSound: {fileID: 8300000, guid: 9b3fbc885e5b3d54dbf986544c927a4b, type: 3}
+  eggSound: {fileID: 8300000, guid: b731084f68a18a5418d1359391dd2fef, type: 3}
+  impactSound: {fileID: 8300000, guid: ddee75b0ad6764b47a2ad41d5a919a53, type: 3}
+  asteroidBreakSound: {fileID: 8300000, guid: a4254103087784343a5896b2aa6587ef, type: 3}
+  chickenDownSound: {fileID: 8300000, guid: b3fc0d12b9b9c6d4f86a9ea35daa52ac, type: 3}
+  damageSound: {fileID: 8300000, guid: c1746d35fe5698345a7d96db276c1bbe, type: 3}
+  giftSound: {fileID: 8300000, guid: 70f2e43b0a7d2aa4180972c64baa6934, type: 3}
+  bombSound: {fileID: 8300000, guid: 3471f4f8b6daab74e9647f30d658ae95, type: 3}
+  roundClearSound: {fileID: 8300000, guid: e9eb77d7367589e49ad27d158cc1aa78, type: 3}

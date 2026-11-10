@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4161a31e7d2663b4b99c80cd7bc8eeeb, type: 3}
+  m_Name: S3R03
+  m_EditorClassIdentifier: Cluck.Runtime::Cluck.WaveDataSO
+  title: GRAVITY WELL
+  kind: 1
+  enemyPrefab: {fileID: 7155304311251428171, guid: 5d9e2026f5c29db49a3c315c18f64cee, type: 3}
+  formation: 2
+  count: 16
+  columns: 6
+  health: 3
+  travelSpeed: 5.49
+  eggSpeed: 5.86
+  eggInterval: 0.84
+  diveSpeed: 10.13
+  diveInterval: 3.9099998
+  spacing: 1.47
+  entryDelay: 0.415
+  entryBend: {x: 4.3, y: 0.28}
+  aim: 0.47800002
+  giftAfterKills: 5

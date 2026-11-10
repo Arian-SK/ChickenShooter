@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b1401ecc364934c81471243b698652, type: 3}
+  m_Name: Level1
+  m_EditorClassIdentifier: Cluck.Runtime::Cluck.LevelDataSO
+  stage: 1
+  sceneName: Level1
+  sector: EARTH ORBIT
+  subtitle: Low orbit patrol
+  useLevelDifficulty: 1
+  chickenHits: 2
+  eggInterval: 2.1
+  music: {fileID: 8300000, guid: 430439b706617a4448a5c13fe9d8b855, type: 3}
+  backdrop: {fileID: 21300000, guid: 27bbcb982bac0b0448c4112d64770639, type: 3}
+  accent: {r: 0.34, g: 0.89, b: 1, a: 1}
+  rounds:
+  - {fileID: 11400000, guid: 38cef18ad1769b443a82ab6c61ba2387, type: 2}
+  - {fileID: 11400000, guid: 9240b6b0e72a0f54cb89938d1c5ceda5, type: 2}
+  - {fileID: 11400000, guid: 1f79751fa0371494f882fe188469a246, type: 2}
+  - {fileID: 11400000, guid: 24ed29d1e2cde664db27c6d29299dccd, type: 2}
+  - {fileID: 11400000, guid: 32a2805ecbf335744b7fef5281765ce3, type: 2}

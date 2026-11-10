@@ -1,0 +1,10 @@
+Space Shooter Redux — Kenney (www.kenney.nl)
+Source: https://lpc.opengameart.org/content/space-shooter-redux
+License: Creative Commons CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Files included:
+  PNG/playerShip1_blue.png -> ship.png
+  PNG/Meteors/meteorBrown_big1.png -> asteroid.png
+  PNG/Effects/shield3.png -> shield.png
+  Bonus/kenvector_future.ttf -> display.ttf

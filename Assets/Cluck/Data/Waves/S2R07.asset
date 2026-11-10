@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4161a31e7d2663b4b99c80cd7bc8eeeb, type: 3}
+  m_Name: S2R07
+  m_EditorClassIdentifier: Cluck.Runtime::Cluck.WaveDataSO
+  title: THE BREACH
+  kind: 0
+  enemyPrefab: {fileID: 4500954069715812748, guid: dde18ad25dca35749a45a8f2d1e764da, type: 3}
+  formation: 1
+  count: 16
+  columns: 6
+  health: 3
+  travelSpeed: 9.52
+  eggSpeed: 5.67
+  eggInterval: 1.01
+  diveSpeed: 9.74
+  diveInterval: 4.04
+  spacing: 1.52
+  entryDelay: 0.146
+  entryBend: {x: 7.7, y: 0.85}
+  aim: 0.43400002
+  giftAfterKills: 7

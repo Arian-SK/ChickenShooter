@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4161a31e7d2663b4b99c80cd7bc8eeeb, type: 3}
+  m_Name: S1R03
+  m_EditorClassIdentifier: Cluck.Runtime::Cluck.WaveDataSO
+  title: DEBRIS BELT
+  kind: 1
+  enemyPrefab: {fileID: 7155304311251428171, guid: 5d9e2026f5c29db49a3c315c18f64cee, type: 3}
+  formation: 0
+  count: 13
+  columns: 5
+  health: 1
+  travelSpeed: 4.23
+  eggSpeed: 4.6
+  eggInterval: 1.7
+  diveSpeed: 7.83
+  diveInterval: 5.77
+  spacing: 1.65
+  entryDelay: 0.48499998
+  entryBend: {x: 7.8, y: 3.1}
+  aim: 0.278
+  giftAfterKills: 5
