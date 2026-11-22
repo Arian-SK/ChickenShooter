@@ -45,6 +45,46 @@ namespace Cluck.Editor
             AssetDatabase.SaveAssets();
         }
 
+        public static void AuthorPhaseTwo()
+        {
+            var campaign = AssetDatabase.LoadAssetAtPath<CampaignDataSO>(Data + "Campaign.asset");
+            WirePhaseTwo(campaign);
+            UpdateScene(campaign.menuScene, campaign, null);
+            AssetDatabase.SaveAssets();
+        }
+
+        static void WirePhaseTwo(CampaignDataSO campaign)
+        {
+            campaign.food = Prefab("Drumstick", BodyKind.Food, Sprite("drumstick", 96), 8, Vector2.zero);
+            campaign.feather = Prefab("Energy Feather", BodyKind.Feather, Sprite("energy_feather", 86), 6, new Vector2(.23f, .43f));
+            campaign.foodSound = Clip("Food");
+            campaign.bossAlertSound = Clip("Boss Alert");
+            campaign.victorySound = Clip("Victory");
+            campaign.defeatSound = Clip("Defeat");
+
+            var names = new[] { "CROWN HEN", "CHICKEN MECHA", "GALACTIC EMPEROR" };
+            for (int i = 0; i < campaign.levels.Length && i < names.Length; i++)
+            {
+                var level = campaign.levels[i];
+                var config = DataAsset<BossDataSO>(Data + $"Boss{i + 1}.asset");
+                config.bossName = names[i];
+                config.sprite = Sprite($"boss{i + 1}", 47 - i * 3);
+                config.hitbox = new Vector2(2.1f + .16f * i, 1.72f + .16f * i);
+                config.bossPrefab = Prefab(config.bossName, BodyKind.Boss, config.sprite, 9, config.hitbox).gameObject;
+                config.health = new[] { 55, 78, 105 }[i];
+                config.volleySize = 5 + i * 2;
+                config.volleyInterval = 1.55f - .24f * i;
+                config.projectileSpeed = 4.5f + .55f * i;
+                config.sweepWidth = 2.2f + .6f * i;
+                config.escorts = i + 2;
+                config.accent = level.accent;
+                level.boss = config;
+                EditorUtility.SetDirty(config);
+                EditorUtility.SetDirty(level);
+            }
+            EditorUtility.SetDirty(campaign);
+        }
+
         static void UpdateScene(string name, CampaignDataSO campaign, LevelDataSO level)
         {
             var scene = EditorSceneManager.OpenScene(Scenes + name + ".unity", OpenSceneMode.Single);
@@ -69,6 +109,7 @@ namespace Cluck.Editor
                 menu = MainMenuPanel.Create(entry.transform, campaign);
             }
             if (menu != null) menu.FitVolumeHandles();
+            if (menu != null) menu.AddContinueButton();
             entry.ConfigurePresentation(background, menu);
             EditorUtility.SetDirty(entry);
         }
@@ -166,10 +207,14 @@ namespace Cluck.Editor
             }
         }
 
-        [MenuItem("Cluck Defender/Build Phase 1 for Windows")]
-        public static void BuildPhaseOne()
+        [MenuItem("Cluck Defender/Build Phase 2 for Windows")]
+        public static void BuildPhaseTwo()
         {
-            const string folder = "Builds/Phase1-Windows";
+            BuildWindows("Builds/Phase2-Windows");
+        }
+
+        static void BuildWindows(string folder)
+        {
             Directory.CreateDirectory(folder);
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
@@ -179,8 +224,8 @@ namespace Cluck.Editor
                 options = BuildOptions.CompressWithLz4HC
             });
             if (report.summary.result != BuildResult.Succeeded)
-                throw new BuildFailedException("The Phase 1 build failed. See the Unity build log.");
-            Debug.Log("Phase 1 Windows build: " + Path.GetFullPath(report.summary.outputPath));
+                throw new BuildFailedException("The Windows build failed. See the Unity build log.");
+            Debug.Log("Windows build: " + Path.GetFullPath(report.summary.outputPath));
         }
 
         [MenuItem("Cluck Defender/Rebuild authored campaign")]
@@ -237,6 +282,7 @@ namespace Cluck.Editor
             WireChickenSprites();
             WireAsteroidSprites();
             WireAudio(campaign);
+            WirePhaseTwo(campaign);
             EditorUtility.SetDirty(campaign);
             AssetDatabase.SaveAssets();
 

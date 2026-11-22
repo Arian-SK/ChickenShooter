@@ -42,12 +42,14 @@ namespace Cluck
         {
             music.volume = volume;
             PlayerPrefs.SetFloat(MusicKey, volume);
+            PlayerPrefs.Save();
         }
 
         internal void SetEffects(float volume)
         {
             effects.volume = volume;
             PlayerPrefs.SetFloat(EffectsKey, volume);
+            PlayerPrefs.Save();
         }
 
         internal void SetPaused(bool paused)
@@ -58,6 +60,14 @@ namespace Cluck
                 effects.Stop();
             }
             else music.UnPause();
+        }
+
+        internal void PlayGameOver(AudioClip cue)
+        {
+            music.Stop();
+            effects.Stop();
+            effects.clip = cue;
+            if (cue != null) effects.Play();
         }
     }
 }

@@ -97,3 +97,17 @@ def chime(name, notes):
 
 chime("Gift", [72, 79, 84])
 chime("Round Clear", [67, 72, 76, 79])
+chime("Food", [71, 78])
+chime("Boss Alert", [48, 55, 48, 54])
+chime("Victory", [60, 67, 72, 76, 79, 84])
+def defeat():
+    samples = np.zeros(round(1.55 * RATE))
+    for at, note in ((0, 62), (.21, 58), (.43, 53), (.72, 48)):
+        start = round(at * RATE)
+        lead = tone(note, .58, 4.2, .27)
+        bass = tone(note - 12, .58, 5.4, .12)
+        samples[start:start+len(lead)] += .40 * lead + .23 * bass
+    save("Defeat", samples)
+
+
+defeat()

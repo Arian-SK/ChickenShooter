@@ -25,6 +25,7 @@ namespace Cluck
         public Color accent = Color.cyan;
         [Header("Rounds")]
         public WaveDataSO[] rounds;
+        public BossDataSO boss;
 
         internal int ChickenHealth(WaveDataSO wave) => Mathf.Max(1, useLevelDifficulty ? chickenHits : wave.health);
         internal float EggInterval(WaveDataSO wave) => Mathf.Max(.1f, useLevelDifficulty ? eggInterval : wave.eggInterval);

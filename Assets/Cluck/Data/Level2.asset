@@ -30,3 +30,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 606b7dd0084ef7540b46b0eafe1c01b1, type: 2}
   - {fileID: 11400000, guid: ac088ded346a1444fa047bf7f26c9a2e, type: 2}
   - {fileID: 11400000, guid: ebb2cf4c33d57e44c96399c3a30de2b7, type: 2}
+  boss: {fileID: 11400000, guid: c960686f2f54f2545a7fb31cdfec3bc1, type: 2}

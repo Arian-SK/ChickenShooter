@@ -30,6 +30,8 @@ MonoBehaviour:
   egg: {fileID: 7919558801785326632, guid: 178bb4efa4f87ee4d805226dc17fe1db, type: 3}
   gift: {fileID: 138677470878455625, guid: edbd4e0acc12d8f49b0a3aa6c89c841f, type: 3}
   spark: {fileID: 5616533846985035521, guid: 93536e4db1731694babc4f869fd61fcb, type: 3}
+  food: {fileID: 8739090815758514009, guid: 13e8575494c16e446b2f80b53410d464, type: 3}
+  feather: {fileID: 1421693677267723431, guid: f12207d6ef1fe134ca8c3224f0c7d82c, type: 3}
   menuMusic: {fileID: 8300000, guid: a9501112d971e0b49b7417dc6bb24167, type: 3}
   laserSound: {fileID: 8300000, guid: 9b3fbc885e5b3d54dbf986544c927a4b, type: 3}
   eggSound: {fileID: 8300000, guid: b731084f68a18a5418d1359391dd2fef, type: 3}
@@ -40,3 +42,7 @@ MonoBehaviour:
   giftSound: {fileID: 8300000, guid: 70f2e43b0a7d2aa4180972c64baa6934, type: 3}
   bombSound: {fileID: 8300000, guid: 3471f4f8b6daab74e9647f30d658ae95, type: 3}
   roundClearSound: {fileID: 8300000, guid: e9eb77d7367589e49ad27d158cc1aa78, type: 3}
+  foodSound: {fileID: 8300000, guid: 8278fb97fa8f67d42bb1947476d14535, type: 3}
+  bossAlertSound: {fileID: 8300000, guid: c0a78a6e1aefd5d44b6d569a03a2ed01, type: 3}
+  victorySound: {fileID: 8300000, guid: 06fa09a7da54547429b1eea40b252bd5, type: 3}
+  defeatSound: {fileID: 8300000, guid: 248d7ab7c99ca1b4c8f8cba621249070, type: 3}

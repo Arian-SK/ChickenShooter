@@ -13,11 +13,13 @@ namespace Cluck
         public Sprite ship, shield, flare, ring;
         public Material spriteMaterial;
         public PoolBody egg, gift, spark;
+        public PoolBody food, feather;
 
         [Header("Audio")]
         public AudioClip menuMusic;
         public AudioClip laserSound, eggSound, impactSound;
         public AudioClip asteroidBreakSound, chickenDownSound, damageSound;
         public AudioClip giftSound, bombSound, roundClearSound;
+        public AudioClip foodSound, bossAlertSound, victorySound, defeatSound;
     }
 }

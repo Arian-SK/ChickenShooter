@@ -74,9 +74,9 @@ namespace Cluck
         void CheckContact(Collider2D other)
         {
             if (arena == null || !arena.CanHitPlayer || !other.TryGetComponent<PoolBody>(out var body) || !body.Active) return;
-            if (body.kind != BodyKind.Egg && !arena.CombatActive) return;
+            if (body.kind is not (BodyKind.Egg or BodyKind.Feather) && !arena.CombatActive) return;
             if (body.kind == BodyKind.Gift) { arena.TakeGift(body); return; }
-            if (immune > 0 || (body.kind != BodyKind.Chicken && body.kind != BodyKind.Rock && body.kind != BodyKind.Egg)) return;
+            if (immune > 0 || body.kind is not (BodyKind.Chicken or BodyKind.Rock or BodyKind.Egg or BodyKind.Boss or BodyKind.Feather)) return;
             arena.PlayerHit(body);
         }
 

@@ -10,16 +10,25 @@ namespace Cluck
         [SerializeField] RectTransform frame;
         [SerializeField] Button play;
         [SerializeField] Button quit;
+        [SerializeField] Button resume;
+        [SerializeField] Text checkpoint;
         [SerializeField] Slider musicVolume;
         [SerializeField] Slider effectsVolume;
 
         internal RectTransform Frame => frame;
         internal bool HasVolumeControls => musicVolume != null && effectsVolume != null;
+        internal bool HasContinue => resume != null;
 
         internal void Bind(GameManager state, EventSystem events, GameAudio sound)
         {
             play.onClick.AddListener(state.NewGame);
             quit.onClick.AddListener(Application.Quit);
+            AddContinueButton();
+            AddPracticeOptions();
+            var save = state.SavedRun();
+            resume.interactable = save != null;
+            checkpoint.text = save == null ? "No saved flight" : $"Saved flight  /  Level {save.levelIndex}  ·  Round {save.roundIndex}";
+            if (save != null) resume.onClick.AddListener(() => state.ContinueGame(save));
             if (musicVolume != null)
             {
                 musicVolume.SetValueWithoutNotify(sound.MusicVolume);
@@ -30,7 +39,50 @@ namespace Cluck
                 effectsVolume.SetValueWithoutNotify(sound.EffectsVolume);
                 effectsVolume.onValueChanged.AddListener(sound.SetEffects);
             }
-            events.SetSelectedGameObject(play.gameObject);
+            events.SetSelectedGameObject(save != null ? resume.gameObject : play.gameObject);
+        }
+
+        void AddPracticeOptions()
+        {
+            Color fill = new(.075f, .12f, .19f, .98f);
+            var panel = Image(frame, "Practice options", new Rect(746, 619, 455, 81), fill).rectTransform;
+            Label(panel, "Heading", "Practice options", new Rect(12, 3, 415, 30), 17, FontStyle.Bold, Color.white, TextAnchor.MiddleLeft);
+            Color buttonColor = new(.16f, .25f, .36f);
+            var lives = MenuButton(panel, "Starting lives", new Rect(12, 35, 194, 36), buttonColor, Color.white);
+            var eggs = MenuButton(panel, "Shootable eggs", new Rect(215, 35, 228, 36), buttonColor, Color.white);
+            var livesLabel = lives.GetComponentInChildren<Text>();
+            var eggsLabel = eggs.GetComponentInChildren<Text>();
+            livesLabel.fontSize = eggsLabel.fontSize = 17;
+
+            void Refresh()
+            {
+                livesLabel.text = $"Starting lives: {GameManager.ConfiguredLives}";
+                eggsLabel.text = GameManager.ShootableEggs ? "Shootable eggs: On" : "Shootable eggs: Off";
+            }
+
+            lives.onClick.AddListener(() => { GameManager.CycleStartingLives(); Refresh(); });
+            eggs.onClick.AddListener(() => { GameManager.ToggleShootableEggs(); Refresh(); });
+            Refresh();
+        }
+
+        internal void AddContinueButton()
+        {
+            if (resume != null) return;
+            var panel = play.transform.parent;
+            var playRect = (RectTransform)play.transform;
+            playRect.sizeDelta = new Vector2(170, 59);
+            var playLabel = play.GetComponentInChildren<Text>();
+            playLabel.text = "New Game";
+            ((RectTransform)playLabel.transform).sizeDelta = playRect.sizeDelta;
+            var quitRect = (RectTransform)quit.transform;
+            quitRect.anchoredPosition = new Vector2(417, -193);
+            quitRect.sizeDelta = new Vector2(128, 59);
+            ((RectTransform)quit.GetComponentInChildren<Text>().transform).sizeDelta = quitRect.sizeDelta;
+            resume = MenuButton(panel, "Continue", new Rect(220, 193, 182, 59), new Color(.14f, .23f, .34f), Color.white);
+            Label(panel, "Checkpoint", "", new Rect(37, 257, 550, 24), 15, FontStyle.Normal,
+                new Color(.71f, .79f, .88f), TextAnchor.MiddleLeft);
+            checkpoint = panel.Find("Checkpoint").GetComponent<Text>();
+            ((RectTransform)panel.Find("Controls")).anchoredPosition = new Vector2(37, -286);
         }
 
         internal static MainMenuPanel Create(Transform parent, CampaignDataSO campaign)

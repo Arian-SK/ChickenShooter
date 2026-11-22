@@ -89,6 +89,51 @@ for i in range(3):
         make_sprite(f"chicken{i+1}_{suffix}", lambda d, i=i, damage=damage: chicken(d, i, damage))
 
 
+def boss(d, tier):
+    chicken(d, tier)
+    accent = ("#ffaa57", "#fc6543", "#6ef2d2")[tier]
+    def plate(points, fill):
+        coordinates = [(round(x*3), round(y*3)) for x, y in points]
+        d.polygon(coordinates, fill)
+        d.line(coordinates + coordinates[:1], "#17243e", 7, joint="curve")
+    if tier == 0:
+        plate([(39,27),(31,8),(48,15),(63,2),(79,15),(95,8),(89,27)], "#f0be56")
+        plate([(58,16),(64,10),(71,16),(64,23)], "#de5a51")
+    elif tier == 1:
+        for side in (1,-1):
+            plate([(64+side*x,y) for x,y in [(25,30),(54,32),(59,68),(48,84),(31,73)]], "#4e6180")
+            plate([(64+side*x,y) for x,y in [(35,44),(49,40),(51,52),(39,59)]], accent)
+        plate([(40,24),(44,9),(84,9),(89,24),(74,35),(53,35)], "#788cac")
+    else:
+        for side in (1,-1):
+            plate([(64+side*x,y) for x,y in [(29,37),(58,12),(55,38),(61,55),(48,78),(31,71)]], "#523986")
+            plate([(64+side*x,y) for x,y in [(38,43),(53,23),(50,49),(55,54),(40,67)]], accent)
+        plate([(45,21),(64,4),(84,21),(66,38)], "#603da4")
+        plate([(57,21),(64,13),(71,21),(64,29)], accent)
+    plate([(45,84),(63,91),(83,84),(80,100),(64,106),(48,99)], ("#c06147","#475a78","#553683")[tier])
+    plate([(58,91),(64,88),(71,91),(71,98),(64,102),(58,98)], accent)
+
+
+for i in range(3):
+    make_sprite(f"boss{i+1}", lambda d, i=i: boss(d, i))
+
+
+def food(d):
+    d.line([(83,63),(126,107)], "#532e35", 31)
+    d.line([(83,63),(126,107)], "#ffeed3", 20)
+    d.ellipse((116,88,143,115), "#ffeed3", "#532e35", 5)
+    d.ellipse((103,104,130,131), "#ffeed3", "#532e35", 5)
+    d.ellipse((16,11,109,98), "#bd5837", "#512a39", 8)
+    d.ellipse((23,13,87,69), "#f69d49")
+    d.arc((30,17,78,57), 183, 298, "#ffcf70", 8)
+    d.line([(49,66),(67,82),(84,79)], "#74353a", 7)
+
+
+make_sprite("drumstick", food, (50,46))
+make_sprite("energy_feather", lambda d: d.polygon([(39,4),(62,34),(48,88),(37,131),
+    (21,95),(12,42),(28,54),(22,29)], "#fa94ff", "#873cc1", width=5), (25,45))
+
+
 def egg(d):
     d.ellipse((32,8,112,151), "#fb8b60", "#4e263c", 8)
     d.ellipse((41,17,105,120), "#ffe0a6")

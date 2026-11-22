@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e713f18ca4e938458089684151badd2, type: 3}
+  m_Name: Boss2
+  m_EditorClassIdentifier: Cluck.Runtime::Cluck.BossDataSO
+  bossName: CHICKEN MECHA
+  bossPrefab: {fileID: 1501620614497702533, guid: c1c7f74081967844e9b7ac2a9652865b, type: 3}
+  sprite: {fileID: 21300000, guid: 69765e52d88187a4a8af55eaf53e4ce9, type: 3}
+  hitbox: {x: 2.26, y: 1.88}
+  health: 78
+  volleyInterval: 1.31
+  volleySize: 7
+  projectileSpeed: 5.05
+  sweepWidth: 2.8000002
+  escorts: 3
+  accent: {r: 1, g: 0.68, b: 0.4, a: 1}

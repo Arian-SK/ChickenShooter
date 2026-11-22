@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Cluck
 {
-    public enum BodyKind { Laser, Egg, Chicken, Rock, Gift, Spark }
+    public enum BodyKind { Laser, Egg, Chicken, Rock, Gift, Spark, Boss, Food, Feather }
 
     [RequireComponent(typeof(SpriteRenderer))]
     public sealed class PoolBody : MonoBehaviour
@@ -53,7 +53,7 @@ namespace Cluck
         internal void ResetHealth(int health)
         {
             Health = maxHealth = health;
-            Art.sprite = healthy;
+            if (kind != BodyKind.Boss) Art.sprite = healthy;
         }
 
         internal void ApplyDamage(int damage)
@@ -84,8 +84,7 @@ namespace Cluck
         void OnTriggerEnter2D(Collider2D other)
         {
             if (Active && Arena != null && kind == BodyKind.Laser &&
-                other.TryGetComponent<PoolBody>(out var target) &&
-                target.kind is BodyKind.Chicken or BodyKind.Rock) Arena.LaserHit(this, target);
+                other.TryGetComponent<PoolBody>(out var target)) Arena.LaserHit(this, target);
         }
     }
 }

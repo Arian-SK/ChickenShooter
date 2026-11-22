@@ -160,19 +160,43 @@ namespace Cluck
                 hull[i].sprite = data.ship;
                 hull[i].preserveAspect = true;
             }
+            lifeCount = Label(frame, "", new Rect(747, 8, 86, 39), 19, White, true);
             stock = Label(frame, "", new Rect(836, 5, 169, 49), 17, accent, true);
             power = Label(frame, "", new Rect(1005, 5, 200, 49), 17, White, true);
             Action(frame, "II", new Rect(1210, 10, 50, 39), false, () => PauseClicked?.Invoke());
             Panel(frame, "Footer", new Rect(0, 695, 1280, 25), Ink);
             Panel(frame, "Bottom accent", new Rect(0, 695, 1280, 1), Line);
-            Label(frame, "FLIGHT CONTROL  //  WASD / ARROWS", new Rect(22, 696, 410, 24), 14, Haze);
+            foodCount = Label(frame, "", new Rect(26, 696, 115, 24), 14, White);
+            Panel(frame, "Food track", new Rect(145, 703, 168, 9), Line);
+            foodFill = Panel(frame, "Food fill", new Rect(145, 703, 168, 9), new Color(1f, .72f, .31f));
             Label(frame, "SPACE  FIRE     /     X  SCREEN PULSE     /     ESC  PAUSE", new Rect(757, 696, 500, 24), 14, Haze, false, TextAnchor.MiddleRight);
             feedback = Label(frame, "", new Rect(430, 696, 310, 24), 14, accent, false, TextAnchor.MiddleCenter);
             banner = Panel(frame, "Dispatch plate", new Rect(340, 86, 600, 66), Ink).gameObject;
             Panel(banner.transform, "Signal strip", new Rect(0, 0, 600, 2), accent);
             dispatch = Label(banner.transform, "", new Rect(10, 3, 580, 60), 24, White, true, TextAnchor.MiddleCenter);
             banner.SetActive(false);
+            bossBar = Panel(frame, "Boss health", new Rect(390, 63, 500, 51), Ink).gameObject;
+            bossTitle = Label(bossBar.transform, "", new Rect(15, 1, 320, 28), 18, White, true);
+            bossPhase = Label(bossBar.transform, "", new Rect(335, 1, 150, 28), 13, Haze, false, TextAnchor.MiddleRight);
+            Panel(bossBar.transform, "Boss track", new Rect(15, 33, 470, 8), Line);
+            bossFill = Panel(bossBar.transform, "Boss fill", new Rect(15, 33, 470, 8), accent);
+            HideBoss();
         }
+
+        Text foodCount, bossTitle, bossPhase, lifeCount;
+        Image foodFill, bossFill;
+        GameObject bossBar;
+
+        public void BossStatus(BossDataSO config, int health, string phase)
+        {
+            bossBar.SetActive(true);
+            bossTitle.text = config.bossName;
+            bossPhase.text = phase;
+            bossFill.color = config.accent;
+            bossFill.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 470f * health / config.health);
+        }
+
+        public void HideBoss() => bossBar.SetActive(false);
 
         public event System.Action PauseClicked;
         public void Status(GameManager state, LevelDataSO level)
@@ -180,8 +204,17 @@ namespace Cluck
             sector.text = level.stage.ToString("00") + "   " + level.sector;
             score.text = state.Score.ToString("D6");
             stock.text = "PULSE  " + state.Bombs.ToString("00");
+            foodCount.text = $"FOOD  {state.Food}/{GameManager.FoodGoal}";
+            foodFill.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
+                168f * state.Food / GameManager.FoodGoal);
             power.text = "POWER  " + state.Power + " / " + state.Campaign.weaponTiers.Length;
-            for (int i = 0; i < hull.Length; i++) hull[i].color = i < state.Lives ? White : new Color(.45f, .52f, .67f, .28f);
+            bool showCount = state.Lives > hull.Length;
+            lifeCount.text = showCount ? "x" + state.Lives : "";
+            for (int i = 0; i < hull.Length; i++)
+            {
+                hull[i].enabled = !showCount || i == 0;
+                hull[i].color = i < state.Lives ? White : new Color(.45f, .52f, .67f, .28f);
+            }
             for (int i = 0; i < track.Length; i++) track[i].color = i < state.Round ? accent : Line;
             roundLabel = $"ROUND {state.Round:00}/{track.Length:00}";
             Targets(remaining);

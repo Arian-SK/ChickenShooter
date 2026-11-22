@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Cluck
 {
@@ -10,19 +12,23 @@ namespace Cluck
         [SerializeField] Font displayFont;
         [SerializeField] SpriteRenderer background;
         [SerializeField] MainMenuPanel mainMenu;
-        enum Flow { Briefing, Combat, StageClear, Defeated, Complete }
+        enum Flow { Briefing, Combat, Boss, StageClear, Defeated, Complete }
         GameManager state;
         Arena arena;
         ArcadeView view;
         GameAudio sound;
         Backdrop backdrop;
         Camera flightCamera;
+        Vector3 cameraRestPosition;
+        VolumeProfile bloomProfile;
         InputActionAsset controls;
         InputAction move, fire, bomb, pause;
         bool paused, bombQueued, fireQueued;
         float timer, starTime, feedbackTime;
         int viewportWidth, viewportHeight;
         Flow flow;
+        bool ready;
+        bool IsBossRound => level.boss != null && state.Round == level.rounds.Length;
 
         public void Configure(CampaignDataSO data, LevelDataSO sector, Font font)
         {
@@ -40,6 +46,7 @@ namespace Cluck
             state = GameManager.Get(campaign);
             var theme = level != null ? level : campaign.levels[0];
             flightCamera = GetComponentInChildren<Camera>();
+            cameraRestPosition = flightCamera.transform.localPosition;
             if (FindAnyObjectByType<AudioListener>() == null) flightCamera.gameObject.AddComponent<AudioListener>();
             sound = new GameAudio(transform, level != null ? level.music : campaign.menuMusic);
             backdrop = new Backdrop(transform, theme, campaign.spark.GetComponent<SpriteRenderer>().sprite, campaign.spriteMaterial, background);
@@ -47,6 +54,7 @@ namespace Cluck
             view = new ArcadeView(transform, theme.accent, displayFont, mainMenu);
             FitCamera();
             if (level == null) { view.BindMenu(mainMenu, state, sound); return; }
+            SetupBloom();
             state.PrepareStage(level.stage);
             controls = Instantiate(campaign.controls);
             var map = controls.FindActionMap("Flight", true);
@@ -67,8 +75,27 @@ namespace Cluck
             state.Changed += Refresh;
             state.Damaged += HullDamaged;
             arena.GiftCollected += GiftCollected;
+            arena.FoodCollected += FoodCollected;
+            arena.BossChanged += view.BossStatus;
             arena.TargetsChanged += view.Targets;
             Briefing();
+            ready = true;
+        }
+
+        void SetupBloom()
+        {
+            flightCamera.allowHDR = true;
+            flightCamera.GetUniversalAdditionalCameraData().renderPostProcessing = true;
+            var obj = new GameObject("Laser bloom");
+            obj.transform.SetParent(transform, false);
+            var volume = obj.AddComponent<Volume>();
+            volume.isGlobal = true;
+            bloomProfile = ScriptableObject.CreateInstance<VolumeProfile>();
+            var bloom = bloomProfile.Add<Bloom>();
+            bloom.threshold.Override(1.13f);
+            bloom.intensity.Override(.36f);
+            bloom.scatter.Override(.62f);
+            volume.sharedProfile = bloomProfile;
         }
 
         void FitCamera()
@@ -93,24 +120,24 @@ namespace Cluck
             view.FitViewport(flightCamera.rect);
         }
 
-        void QueueFire(InputAction.CallbackContext _) { if (!paused && flow == Flow.Combat) fireQueued = true; }
-        void QueueBomb(InputAction.CallbackContext _) { if (!paused && flow == Flow.Combat) bombQueued = true; }
+        void QueueFire(InputAction.CallbackContext _) { if (!paused && arena != null && arena.CombatActive) fireQueued = true; }
+        void QueueBomb(InputAction.CallbackContext _) { if (!paused && arena != null && arena.CombatActive) bombQueued = true; }
         void PauseAction(InputAction.CallbackContext _) => TogglePause();
 
         void Update()
         {
             FitCamera();
             if (level == null) { backdrop.Step(starTime += Time.deltaTime); return; }
-            if (paused) return;
+            if (!ready || paused) return;
             backdrop.Step(starTime += Time.deltaTime);
-            var shake = arena.Shake;
-            flightCamera.transform.localPosition = new Vector3(
-                Mathf.Sin(Time.time * 89) * shake * .18f, Mathf.Sin(Time.time * 113) * shake * .12f, -10);
+            float shake = state.Lives > 0 ? arena.Shake : 0;
+            flightCamera.transform.localPosition = cameraRestPosition + new Vector3(
+                Mathf.Sin(Time.time * 89) * shake * .18f, Mathf.Sin(Time.time * 113) * shake * .12f);
         }
 
         void FixedUpdate()
         {
-            if (arena == null || paused || flow is Flow.Defeated or Flow.Complete) return;
+            if (!ready || paused || flow is Flow.Defeated or Flow.Complete) return;
             float dt = Time.fixedDeltaTime;
             if (feedbackTime > 0 && (feedbackTime -= dt) <= 0) view.Feedback("");
             if (bombQueued) TryPulse();
@@ -120,6 +147,9 @@ namespace Cluck
             {
                 flow = Flow.Defeated;
                 arena.Lose();
+                flightCamera.transform.localPosition = cameraRestPosition;
+                view.HideBoss();
+                sound.PlayGameOver(campaign.defeatSound);
                 view.Dispatch("");
                 view.Modal("SIGNAL LOST", "Hull lost in sector " + level.stage + ". Regroup at its first round.", "RETRY SECTOR", state.Retry, state.OpenMenu);
                 return;
@@ -129,9 +159,12 @@ namespace Cluck
             {
                 case Flow.Briefing:
                     if ((timer -= dt) > 0) break;
-                    arena.Begin(level.rounds[state.Round - 1]);
+                    state.Checkpoint();
+                    var round = level.rounds[state.Round - 1];
+                    if (IsBossRound) arena.BeginBoss(round);
+                    else arena.Begin(round);
                     view.Dispatch("");
-                    flow = Flow.Combat;
+                    flow = IsBossRound ? Flow.Boss : Flow.Combat;
                     break;
                 case Flow.Combat:
                     if (!arena.Finished) break;
@@ -141,14 +174,16 @@ namespace Cluck
                     if (state.Round < level.rounds.Length)
                     {
                         state.BeginRound(state.Round + 1);
+                        state.Checkpoint();
                         Briefing();
                     }
                     else
                     {
-                        flow = Flow.StageClear;
-                        timer = 3.7f;
-                        view.Dispatch("SECTOR " + level.stage.ToString("00") + " SECURED");
+                        FinishStage();
                     }
+                    break;
+                case Flow.Boss:
+                    if (arena.Finished) FinishStage();
                     break;
                 case Flow.StageClear:
                     if ((timer -= dt) > 0) break;
@@ -161,18 +196,32 @@ namespace Cluck
                     {
                         flow = Flow.Complete;
                         view.Dispatch("");
+                        sound.SetPaused(true);
+                        sound.Play(campaign.victorySound);
                         view.Modal("ORBIT SECURED", "All sectors clear. Final score: " + state.Score.ToString("N0"), "FLY AGAIN", state.NewGame, state.OpenMenu);
                     }
                     break;
             }
         }
 
+        void FinishStage()
+        {
+            arena.EndWave();
+            view.HideBoss();
+            flow = Flow.StageClear;
+            timer = 3.7f;
+            if (level.stage == campaign.levels.Length) SaveFile.Clear();
+            else state.CheckpointNextStage();
+            view.Dispatch("SECTOR " + level.stage.ToString("00") + " SECURED");
+        }
+
         void Briefing()
         {
             flow = Flow.Briefing;
-            timer = state.Round == 1 ? 1.65f : 1.45f;
+            timer = IsBossRound ? 2f : state.Round == 1 ? 1.65f : 1.45f;
             Refresh();
-            view.Dispatch("ROUND " + state.Round.ToString("00") + "  /  " + level.rounds[state.Round - 1].title);
+            string title = IsBossRound ? level.boss.bossName : level.rounds[state.Round - 1].title;
+            view.Dispatch("ROUND " + state.Round.ToString("00") + "  /  " + title);
         }
 
         void Refresh() => view.Status(state, level);
@@ -190,6 +239,7 @@ namespace Cluck
 
         void HullDamaged() => ShowFeedback("HULL HIT");
         void GiftCollected(bool upgraded) => ShowFeedback(upgraded ? "WEAPON UPGRADED" : "+250  BONUS SCORE");
+        void FoodCollected(bool earned) => ShowFeedback(earned ? "+1  SCREEN PULSE" : "+50  FOOD PICKUP");
         void ShowFeedback(string message)
         {
             view.Feedback(message);
@@ -198,7 +248,7 @@ namespace Cluck
 
         void TogglePause()
         {
-            if (arena == null || flow is Flow.Defeated or Flow.Complete) return;
+            if (!ready || flow is Flow.Defeated or Flow.Complete) return;
             paused = !paused;
             arena.Paused = paused;
             sound.SetPaused(paused);
@@ -211,6 +261,7 @@ namespace Cluck
 
         void OnDestroy()
         {
+            if (bloomProfile != null) Destroy(bloomProfile);
             if (state != null && level != null)
             {
                 state.Changed -= Refresh;
